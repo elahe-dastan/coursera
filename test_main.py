@@ -1,30 +1,36 @@
+import unittest
+
 from fastapi.testclient import TestClient
 
+from db.in_memory import InMemoryDB
 from main import app
 
 client = TestClient(app)
 
 
-def test_get_student():
-    response = client.get("/students")
-    assert response.status_code == 200
-    assert response.json() == {}
+class TestMain(unittest.TestCase):
+    def setUp(self) -> None:
+        InMemoryDB.students = {}
 
+    def test_create_student(self):
+        response = client.post(
+            "/students",
+            headers={"Content-Type": "application/json"},
+            json={"id": "9731025", "first_name": "elahe", "last_name": "dastan", "registration_date": "1396-07-01",
+                  "average": "18.1"},
+        )
+        assert response.status_code == 200
+        assert response.json() == {'9731025': {'average': 18.1,
+                                               'first_name': 'elahe',
+                                               'graduation_date': None,
+                                               'id': '9731025',
+                                               'last_name': 'dastan',
+                                               'registration_date': '1396-07-01'}}
 
-def test_create_student():
-    response = client.post(
-        "/students",
-        headers={"Content-Type": "application/json"},
-        json={"id": "9731025", "first_name": "elahe", "last_name": "dastan", "registration_date": "1396-07-01",
-              "average": "18.1"},
-    )
-    assert response.status_code == 200
-    assert response.json() == {'9731025': {'average': 18.1,
-                                           'first_name': 'elahe',
-                                           'graduation_date': None,
-                                           'id': '9731025',
-                                           'last_name': 'dastan',
-                                           'registration_date': '1396-07-01'}}
+    def test_get_student(self):
+        response = client.get("/students")
+        assert response.status_code == 200
+        assert response.json() == {}
 
 # def test_read_item_bad_token():
 #     response = client.get("/items/foo", headers={"X-Token": "hailhydra"})
