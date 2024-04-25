@@ -13,11 +13,13 @@ This repository is a hands-on introduction to building APIs with FastAPI. Throug
 This project guides you through building a simple student server application using FastAPI.
 It's a perfect starting point for anyone who wants to learn the ropes of FastAPI development.
 
+## How to Run
 
-
+```bash
 docker compose up
 
 uvicorn main:app --workers=5
+```
 
 curl 127.0.0.1:8000/students
 
